@@ -1,71 +1,62 @@
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Header() {
-  const { pathname } = useLocation();
+  return (
+    <div style={{
+      background: '#CC1B1B', color: '#fff',
+      textAlign: 'center', padding: '0.55rem 1rem',
+      fontSize: '0.95rem', fontWeight: 700, lineHeight: 1.4,
+    }}>
+      🚨 EMERGENCIA · Terremoto Venezuela 24/06/2026 · Sistema de búsqueda de personas
+    </div>
+  );
+}
 
-  function navStyle(path) {
-    const active = pathname === path || (path === '/buscar' && pathname.startsWith('/buscar'));
-    return {
-      color: active ? '#FFD700' : 'rgba(255,255,255,0.85)',
-      fontWeight: 700,
-      fontSize: '0.9rem',
-      padding: '0.4rem 0.6rem',
-      borderRadius: 8,
-      background: active ? 'rgba(255,255,255,0.12)' : 'transparent',
-      whiteSpace: 'nowrap',
-    };
+export function BottomNav() {
+  const { pathname, search } = useLocation();
+
+  function activo(path, extra) {
+    if (extra) return pathname === path && search.includes(extra);
+    return pathname === path && !search.includes('estado=');
   }
 
-  return (
-    <>
-      <div style={{
-        background: '#CC1B1B',
-        color: '#fff',
-        textAlign: 'center',
-        padding: '0.6rem 1rem',
-        fontSize: '1rem',
-        fontWeight: 700,
-        lineHeight: 1.4,
-      }}>
-        🚨 EMERGENCIA — Terremoto Venezuela 24/06/2026 — Sistema de búsqueda de personas
-      </div>
-      <header style={{
-        background: '#1A4A7A',
-        padding: '0.75rem 1rem',
-        borderBottom: '3px solid #CC1B1B',
-      }}>
-        <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.5rem' }}>
-          <Link to="/" style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff', flexShrink: 0 }}>
-            🇻🇪 AyudarVE
-          </Link>
+  const items = [
+    { to: '/',            icon: '🏠', label: 'Inicio'       },
+    { to: '/buscar',      icon: '🔍', label: 'Buscar'       },
+    { to: '/reportar',    icon: '➕', label: 'Reportar', highlight: true },
+    { to: '/emergencias', icon: '🆘', label: 'Emergencias'  },
+    { to: '/hospital',    icon: '🏥', label: 'Hospital'     },
+  ];
 
-          <nav style={{ display: 'flex', gap: '0.25rem', alignItems: 'center', flexWrap: 'wrap' }}>
-            <Link to="/" style={navStyle('/')}>🏠</Link>
-            <Link to="/buscar" style={navStyle('/buscar')}>🔍 Buscar</Link>
-            <Link to="/buscar?estado=desaparecido" style={{
-              ...navStyle('/desaparecidos'),
-              color: pathname === '/desaparecidos' ? '#FFD700' : '#FFD700',
-              background: 'rgba(255,215,0,0.12)',
+  return (
+    <nav style={{
+      position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 100,
+      background: '#1A4A7A', borderTop: '2px solid #CC1B1B',
+      display: 'flex', alignItems: 'stretch',
+      paddingBottom: 'env(safe-area-inset-bottom)',
+    }}>
+      {items.map(item => {
+        const isActive = activo(item.to);
+        return (
+          <Link key={item.to} to={item.to} style={{
+            flex: 1, display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            padding: '0.5rem 0.25rem',
+            background: item.highlight
+              ? '#CC1B1B'
+              : isActive ? 'rgba(255,255,255,0.12)' : 'transparent',
+            textDecoration: 'none',
+          }}>
+            <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{item.icon}</span>
+            <span style={{
+              fontSize: '0.65rem', fontWeight: 700, marginTop: '0.15rem',
+              color: isActive ? '#FFD700' : item.highlight ? '#fff' : 'rgba(255,255,255,0.8)',
             }}>
-              🔎 Desaparecidos
-            </Link>
-            <Link to="/emergencias" style={{
-              background: '#CC1B1B', color: '#fff',
-              padding: '0.4rem 0.7rem', borderRadius: 8,
-              fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap',
-            }}>
-              🆘 Emergencias
-            </Link>
-            <Link to="/reportar" style={{
-              background: '#1A7A3A', color: '#fff',
-              padding: '0.4rem 0.7rem', borderRadius: 8,
-              fontSize: '0.9rem', fontWeight: 700, whiteSpace: 'nowrap',
-            }}>
-              + Reportar
-            </Link>
-          </nav>
-        </div>
-      </header>
-    </>
+              {item.label}
+            </span>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
