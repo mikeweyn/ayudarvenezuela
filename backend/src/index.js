@@ -8,8 +8,14 @@ const avisosRouter = require('./routes/avisos');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const origenesPermitidos = [
+  'https://ayudarvenezuela.com',
+  'https://www.ayudarvenezuela.com',
+  process.env.FRONTEND_URL,
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
+  origin: origenesPermitidos,
 }));
 app.use(express.json());
 
