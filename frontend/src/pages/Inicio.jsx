@@ -181,6 +181,40 @@ export default function Inicio() {
           </Link>
         </div>
 
+        {/* Números de emergencia — widget compacto */}
+        <div style={{
+          background: '#CC1B1B', borderRadius: 14, padding: '1rem 1.25rem',
+          marginBottom: '1.5rem', color: '#fff',
+        }}>
+          <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.75rem' }}>
+            🆘 Números de emergencia — toca para llamar
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+            {[
+              { num: '911', label: 'Emergencia' },
+              { num: '0800-RESCATE', label: 'Rescate' },
+              { num: '166', label: 'Prot. Civil' },
+              { num: '167', label: 'Bomberos' },
+            ].map(e => (
+              <a key={e.num} href={`tel:${e.num.replace(/-/g,'')}`} style={{ textDecoration: 'none' }}>
+                <div style={{
+                  background: 'rgba(255,255,255,0.15)', borderRadius: 10, padding: '0.6rem 0.75rem',
+                  textAlign: 'center', border: '1px solid rgba(255,255,255,0.3)',
+                }}>
+                  <div style={{ fontWeight: 900, fontSize: '1.1rem', color: '#fff' }}>{e.num}</div>
+                  <div style={{ fontSize: '0.78rem', opacity: 0.85 }}>{e.label}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+          <Link to="/emergencias" style={{
+            display: 'block', textAlign: 'center', marginTop: '0.75rem',
+            color: 'rgba(255,255,255,0.85)', fontSize: '0.9rem', fontWeight: 600,
+          }}>
+            Ver todos los números →
+          </Link>
+        </div>
+
         {/* Desaparecidos */}
         <div style={{ marginBottom: '2rem' }}>
           <div style={{
