@@ -39,47 +39,52 @@ export default function Buscar() {
 
   return (
     <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '3rem' }}>
-      <h1 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: '1rem' }}>Buscar persona</h1>
+      <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1.25rem' }}>
+        🔍 Buscar persona
+      </h1>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
+      <form onSubmit={handleSubmit} style={{ marginBottom: '1.5rem' }}>
         <input
           value={query}
           onChange={e => setQuery(e.target.value)}
-          placeholder="Nombre, apellido o ambos..."
+          placeholder="Escribe el nombre y apellido..."
+          style={{ marginBottom: '0.75rem', fontSize: '1.1rem' }}
           autoFocus
         />
         <button type="submit" disabled={buscando || query.trim().length < 2}
-          style={{ background: '#1A4A7A', color: '#fff', whiteSpace: 'nowrap' }}>
-          {buscando ? 'Buscando...' : 'Buscar'}
+          style={{ background: '#1A4A7A', color: '#fff', width: '100%', fontSize: '1.1rem' }}>
+          {buscando ? 'Buscando...' : '🔍 Buscar'}
         </button>
       </form>
 
       {error && (
-        <div style={{ background: '#fff0f0', border: '1px solid #CC1B1B', borderRadius: 8, padding: '0.75rem', color: '#CC1B1B', marginBottom: '1rem' }}>
+        <div style={{ background: '#fff0f0', border: '2px solid #CC1B1B', borderRadius: 10, padding: '1rem', color: '#CC1B1B', marginBottom: '1rem', fontSize: '1rem' }}>
           {error}
         </div>
       )}
 
       {buscado && (
         <div>
-          <p style={{ fontSize: '0.875rem', color: '#6B7280', marginBottom: '0.75rem' }}>
+          <p style={{ fontSize: '1rem', color: '#4B5563', marginBottom: '1rem', fontWeight: 600 }}>
             {resultados.length === 0
-              ? `No se encontraron resultados para "${params.get('q')}"`
-              : `${resultados.length} resultado${resultados.length > 1 ? 's' : ''} para "${params.get('q')}"`}
+              ? `No encontramos a "${params.get('q')}"`
+              : `Se encontraron ${resultados.length} resultado${resultados.length > 1 ? 's' : ''} para "${params.get('q')}"`}
           </p>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {resultados.map(p => <PersonaCard key={p.id} persona={p} />)}
           </div>
 
           {resultados.length === 0 && (
-            <div className="card" style={{ marginTop: '1rem', background: '#EBF2FA', border: '1px solid #BDD5EA' }}>
-              <p style={{ fontWeight: 600, marginBottom: '0.5rem' }}>¿No encontraste a quien buscas?</p>
-              <p style={{ fontSize: '0.875rem', color: '#374151', marginBottom: '1rem' }}>
-                Puedes registrarlo/a para que otras personas puedan dejar información si lo/la ven.
+            <div className="card" style={{ marginTop: '1rem', background: '#EBF2FA', border: '2px solid #BDD5EA' }}>
+              <p style={{ fontWeight: 700, marginBottom: '0.5rem', fontSize: '1.05rem' }}>
+                ¿No encontraste a quien buscas?
+              </p>
+              <p style={{ fontSize: '1rem', color: '#374151', marginBottom: '1.25rem', lineHeight: 1.5 }}>
+                Puedes registrarlo para que otros puedan dejar información si lo ven.
               </p>
               <a href={`/reportar?tipo=familiar&nombre=${encodeURIComponent(query)}`}
-                style={{ display: 'inline-block', background: '#1A4A7A', color: '#fff', padding: '0.6rem 1rem', borderRadius: 8, fontWeight: 600, fontSize: '0.9rem' }}>
+                style={{ display: 'block', background: '#1A4A7A', color: '#fff', padding: '1rem', borderRadius: 10, fontWeight: 700, fontSize: '1.05rem', textAlign: 'center' }}>
                 Registrar a {query}
               </a>
             </div>
