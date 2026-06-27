@@ -9,13 +9,41 @@ function formatFecha(iso) {
   });
 }
 
+function ContactoLink({ contacto }) {
+  if (!contacto) return null;
+  const c = contacto.trim();
+  let href, icon, label;
+  if (c.startsWith('@')) {
+    href = `https://t.me/${c.slice(1)}`;
+    icon = '✈️'; label = `Telegram: ${c}`;
+  } else if (/^[\d\s\-+()]{7,}$/.test(c)) {
+    href = `https://wa.me/${c.replace(/\D/g,'')}`;
+    icon = '💬'; label = `WhatsApp: ${c}`;
+  } else if (c.includes('@')) {
+    href = `mailto:${c}`;
+    icon = '✉️'; label = c;
+  } else {
+    return <span style={{ fontSize: '0.85rem', color: '#374151' }}>📞 {c}</span>;
+  }
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{
+      display: 'inline-flex', alignItems: 'center', gap: '0.3rem',
+      background: '#1A4A7A', color: '#fff', borderRadius: 8,
+      padding: '0.4rem 0.75rem', fontSize: '0.85rem', fontWeight: 700,
+      textDecoration: 'none', marginTop: '0.4rem',
+    }}>
+      {icon} Contactar: {label}
+    </a>
+  );
+}
+
 export default function Persona() {
   const { id } = useParams();
   const [persona, setPersona] = useState(null);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState('');
 
-  const [aviso, setAviso] = useState({ autor: '', texto: '', ubicacion: '' });
+  const [aviso, setAviso] = useState({ autor: '', texto: '', ubicacion: '', contacto: '' });
   const [enviandoAviso, setEnviandoAviso] = useState(false);
   const [avisoOk, setAvisoOk] = useState(false);
 
@@ -39,7 +67,7 @@ export default function Persona() {
     try {
       await agregarAviso({ persona_id: id, ...aviso });
       setAvisoOk(true);
-      setAviso({ autor: '', texto: '', ubicacion: '' });
+      setAviso({ autor: '', texto: '', ubicacion: '', contacto: '' });
       await cargar();
     } catch {
       alert('Error al enviar aviso.');
@@ -138,6 +166,11 @@ export default function Persona() {
               </div>
               <p style={{ fontSize: '0.9rem' }}>{a.texto}</p>
               {a.ubicacion && <p style={{ fontSize: '0.8rem', color: '#6B7280', marginTop: '0.25rem' }}>📍 {a.ubicacion}</p>}
+              {a.contacto && (
+                <div style={{ marginTop: '0.5rem' }}>
+                  <ContactoLink contacto={a.contacto} />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -168,6 +201,14 @@ export default function Persona() {
             <label>¿Dónde lo/la viste?</label>
             <input value={aviso.ubicacion} onChange={e => setAviso(a => ({ ...a, ubicacion: e.target.value }))}
               placeholder="Barrio, sector, refugio..." />
+          </div>
+          <div className="campo">
+            <label>Tu contacto (opcional) — para que la familia pueda escribirte</label>
+            <input value={aviso.contacto} onChange={e => setAviso(a => ({ ...a, contacto: e.target.value }))}
+              placeholder="@TelegramUser, número WhatsApp, o email" />
+            <small style={{ color: '#6B7280', fontSize: '0.8rem', marginTop: '0.25rem', display: 'block' }}>
+              Solo se muestra a quienes vean este aviso. Puedes dejar @usuario de Telegram si prefieres no dar tu número.
+            </small>
           </div>
           <button type="submit" disabled={enviandoAviso || !aviso.autor.trim() || !aviso.texto.trim()}
             style={{ background: '#1A4A7A', color: '#fff' }}>

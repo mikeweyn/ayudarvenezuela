@@ -41,7 +41,7 @@ router.get('/:id', async (req, res) => {
     if (!persona) return res.status(404).json({ error: 'Persona no encontrada.' });
 
     const { rows: avisos } = await pool.query(
-      `SELECT id, autor, texto, ubicacion, created_at
+      `SELECT id, autor, texto, ubicacion, contacto, created_at
        FROM avisos WHERE persona_id = $1 ORDER BY created_at DESC`,
       [req.params.id]
     );
