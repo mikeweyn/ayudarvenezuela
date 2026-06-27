@@ -89,13 +89,19 @@ router.post('/', async (req, res) => {
 router.get('/', async (req, res) => {
   const { estado } = req.query;
   try {
-    const { rows } = await pool.query(
-      `SELECT id, nombre, apellido, estado, ultima_ubicacion, registrado_por, tipo_registro, created_at
-       FROM personas
-       WHERE ($1::text IS NULL OR estado = $1)
-       ORDER BY created_at DESC LIMIT 100`,
-      [estado || null]
-    );
+    let rows;
+    if (estado) {
+      ({ rows } = await pool.query(
+        `SELECT id, nombre, apellido, estado, ultima_ubicacion, registrado_por, tipo_registro, created_at
+         FROM personas WHERE estado = $1 ORDER BY created_at DESC LIMIT 100`,
+        [estado]
+      ));
+    } else {
+      ({ rows } = await pool.query(
+        `SELECT id, nombre, apellido, estado, ultima_ubicacion, registrado_por, tipo_registro, created_at
+         FROM personas ORDER BY created_at DESC LIMIT 100`
+      ));
+    }
     res.json(rows);
   } catch (err) {
     console.error(err);

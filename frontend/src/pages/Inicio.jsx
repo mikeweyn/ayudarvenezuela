@@ -3,21 +3,24 @@ import { Link, useNavigate } from 'react-router-dom';
 import { listarRecientes, listarPorEstado } from '../api';
 import PersonaCard from '../components/PersonaCard';
 
-const FOTOS_TERREMOTO = [
+const SLIDES = [
   {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/FEMA_-_40941_-_Earthquake_damage_in_Haiti.jpg/640px-FEMA_-_40941_-_Earthquake_damage_in_Haiti.jpg',
-    alt: 'Zona afectada por el terremoto',
-    caption: 'Zonas afectadas en Yaracuy',
+    bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+    emoji: '🏚️',
+    titulo: 'Terremoto 7.5 Mw — Venezuela',
+    caption: 'San Felipe y Yaracuy — 24 de junio 2026',
   },
   {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Rescue_dog_at_work.jpg/640px-Rescue_dog_at_work.jpg',
-    alt: 'Equipos de rescate',
-    caption: 'Equipos de rescate en acción',
+    bg: 'linear-gradient(135deg, #2d0000 0%, #5c0000 50%, #8b0000 100%)',
+    emoji: '🚒',
+    titulo: '+920 fallecidos · +4.300 heridos',
+    caption: 'Equipos de rescate operando en las zonas afectadas',
   },
   {
-    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/FEMA_-_40950_-_Aerial_of_earthquake_damage_in_Haiti.jpg/640px-FEMA_-_40950_-_Aerial_of_earthquake_damage_in_Haiti.jpg',
-    alt: 'Vista aérea de zonas afectadas',
-    caption: 'San Felipe y Yumare, Yaracuy',
+    bg: 'linear-gradient(135deg, #0d2137 0%, #1a4a7a 50%, #1e5f9e 100%)',
+    emoji: '🤝',
+    titulo: 'Ayuda humanitaria en curso',
+    caption: 'Caracas · La Guaira · Yaracuy · Miranda',
   },
 ];
 
@@ -25,14 +28,14 @@ export default function Inicio() {
   const [busqueda, setBusqueda] = useState('');
   const [recientes, setRecientes] = useState([]);
   const [desaparecidos, setDesaparecidos] = useState([]);
-  const [fotoActiva, setFotoActiva] = useState(0);
+  const [slideActivo, setSlideActivo] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     listarRecientes().then(r => setRecientes(r.data)).catch(() => {});
     listarPorEstado('desaparecido').then(r => setDesaparecidos(r.data)).catch(() => {});
     const intervalo = setInterval(() => {
-      setFotoActiva(f => (f + 1) % FOTOS_TERREMOTO.length);
+      setSlideActivo(f => (f + 1) % SLIDES.length);
     }, 5000);
     return () => clearInterval(intervalo);
   }, []);
@@ -72,35 +75,33 @@ export default function Inicio() {
         </div>
       </div>
 
-      {/* Galería de imágenes — sin parpadeo con fade CSS */}
-      <div style={{ background: '#111827', position: 'relative', overflow: 'hidden', height: 220 }}>
-        {FOTOS_TERREMOTO.map((foto, i) => (
-          <img
-            key={i}
-            src={foto.src}
-            alt={foto.alt}
-            style={{
-              position: 'absolute', top: 0, left: 0,
-              width: '100%', height: '100%', objectFit: 'cover',
-              opacity: i === fotoActiva ? 0.7 : 0,
-              transition: 'opacity 0.8s ease',
-            }}
-          />
+      {/* Slider de situación — sin imágenes externas, sin parpadeo */}
+      <div style={{ position: 'relative', overflow: 'hidden', height: 180 }}>
+        {SLIDES.map((slide, i) => (
+          <div key={i} style={{
+            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+            background: slide.bg,
+            opacity: i === slideActivo ? 1 : 0,
+            transition: 'opacity 0.9s ease',
+            display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center',
+            padding: '1rem', textAlign: 'center',
+          }}>
+            <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }}>{slide.emoji}</div>
+            <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.05rem', marginBottom: '0.3rem' }}>
+              {slide.titulo}
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.85rem' }}>
+              📍 {slide.caption}
+            </div>
+          </div>
         ))}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0,
-          background: 'linear-gradient(transparent, rgba(0,0,0,0.75))',
-          padding: '1rem',
-          color: '#fff', fontSize: '0.9rem', fontWeight: 600,
-        }}>
-          📍 {FOTOS_TERREMOTO[fotoActiva].caption}
-        </div>
-        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.4rem' }}>
-          {FOTOS_TERREMOTO.map((_, i) => (
-            <button key={i} onClick={() => setFotoActiva(i)}
+        <div style={{ position: 'absolute', bottom: '0.6rem', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '0.4rem' }}>
+          {SLIDES.map((_, i) => (
+            <button key={i} onClick={() => setSlideActivo(i)}
               style={{
-                width: 10, height: 10, borderRadius: '50%', padding: 0, minHeight: 'unset',
-                background: i === fotoActiva ? '#fff' : 'rgba(255,255,255,0.4)',
+                width: 8, height: 8, borderRadius: '50%', padding: 0, minHeight: 'unset',
+                background: i === slideActivo ? '#FFD700' : 'rgba(255,255,255,0.4)',
                 border: 'none', cursor: 'pointer',
               }} />
           ))}
@@ -181,37 +182,41 @@ export default function Inicio() {
         </div>
 
         {/* Desaparecidos */}
-        {desaparecidos.length > 0 && (
-          <div style={{ marginBottom: '2rem' }}>
-            <div style={{
-              background: '#FFF3CD', border: '2px solid #856404', borderRadius: 12,
-              padding: '0.75rem 1rem', marginBottom: '0.75rem',
-              display: 'flex', alignItems: 'center', gap: '0.6rem',
-            }}>
-              <span style={{ fontSize: '1.5rem' }}>🔎</span>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#856404' }}>
-                  {desaparecidos.length} personas desaparecidas reportadas
-                </div>
-                <div style={{ fontSize: '0.85rem', color: '#6c5700' }}>
-                  Sus familias las están buscando — si sabes algo, haz clic en su nombre
-                </div>
+        <div style={{ marginBottom: '2rem' }}>
+          <div style={{
+            background: '#FFF3CD', border: '2px solid #856404', borderRadius: 12,
+            padding: '0.75rem 1rem', marginBottom: '0.75rem',
+            display: 'flex', alignItems: 'center', gap: '0.6rem',
+          }}>
+            <span style={{ fontSize: '1.5rem' }}>🔎</span>
+            <div>
+              <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#856404' }}>
+                {desaparecidos.length > 0
+                  ? `${desaparecidos.length} personas desaparecidas reportadas`
+                  : 'Personas desaparecidas'}
+              </div>
+              <div style={{ fontSize: '0.85rem', color: '#6c5700' }}>
+                {desaparecidos.length > 0
+                  ? 'Sus familias las están buscando — si sabes algo, haz clic en su nombre'
+                  : 'Si no encuentras a un familiar, repórtalo como desaparecido usando el botón "Reportar"'}
               </div>
             </div>
+          </div>
+          {desaparecidos.length > 0 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-              {desaparecidos.slice(0, 15).map(p => (
-                <PersonaCard key={p.id} persona={p} />
+              {desaparecidos.slice(0, 15).map(per => (
+                <PersonaCard key={per.id} persona={per} />
               ))}
             </div>
-            {desaparecidos.length > 15 && (
-              <Link to="/buscar?estado=desaparecido">
-                <button style={{ width: '100%', marginTop: '0.75rem', background: '#856404', color: '#fff' }}>
-                  Ver los {desaparecidos.length} desaparecidos →
-                </button>
-              </Link>
-            )}
-          </div>
-        )}
+          )}
+          {desaparecidos.length > 15 && (
+            <Link to="/buscar?estado=desaparecido">
+              <button style={{ width: '100%', marginTop: '0.75rem', background: '#856404', color: '#fff' }}>
+                Ver los {desaparecidos.length} desaparecidos →
+              </button>
+            </Link>
+          )}
+        </div>
 
         {/* Registros recientes */}
         {recientes.length > 0 && (
