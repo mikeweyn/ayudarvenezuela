@@ -3,13 +3,36 @@ import { Link, useNavigate } from 'react-router-dom';
 import { listarRecientes } from '../api';
 import PersonaCard from '../components/PersonaCard';
 
+const FOTOS_TERREMOTO = [
+  {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/FEMA_-_40941_-_Earthquake_damage_in_Haiti.jpg/640px-FEMA_-_40941_-_Earthquake_damage_in_Haiti.jpg',
+    alt: 'Zona afectada por el terremoto',
+    caption: 'Zonas afectadas en Yaracuy',
+  },
+  {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Rescue_dog_at_work.jpg/640px-Rescue_dog_at_work.jpg',
+    alt: 'Equipos de rescate',
+    caption: 'Equipos de rescate en acción',
+  },
+  {
+    src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/FEMA_-_40950_-_Aerial_of_earthquake_damage_in_Haiti.jpg/640px-FEMA_-_40950_-_Aerial_of_earthquake_damage_in_Haiti.jpg',
+    alt: 'Vista aérea de zonas afectadas',
+    caption: 'San Felipe y Yumare, Yaracuy',
+  },
+];
+
 export default function Inicio() {
   const [busqueda, setBusqueda] = useState('');
   const [recientes, setRecientes] = useState([]);
+  const [fotoActiva, setFotoActiva] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     listarRecientes().then(r => setRecientes(r.data)).catch(() => {});
+    const intervalo = setInterval(() => {
+      setFotoActiva(f => (f + 1) % FOTOS_TERREMOTO.length);
+    }, 5000);
+    return () => clearInterval(intervalo);
   }, []);
 
   function handleBuscar(e) {
@@ -22,7 +45,7 @@ export default function Inicio() {
   return (
     <div style={{ paddingBottom: '3rem' }}>
 
-      {/* Hero */}
+      {/* Hero con buscador */}
       <div style={{ background: '#1A4A7A', color: '#fff', padding: '2rem 1rem 2.5rem' }}>
         <div className="container">
           <h1 style={{ fontSize: '1.7rem', fontWeight: 800, lineHeight: 1.3, marginBottom: '0.4rem' }}>
@@ -31,7 +54,6 @@ export default function Inicio() {
           <p style={{ opacity: 0.9, fontSize: '1rem', marginBottom: '1.5rem' }}>
             Venezuela · 24 de junio de 2026
           </p>
-
           <form onSubmit={handleBuscar}>
             <input
               value={busqueda}
@@ -45,6 +67,59 @@ export default function Inicio() {
               🔍 Buscar persona
             </button>
           </form>
+        </div>
+      </div>
+
+      {/* Galería de imágenes */}
+      <div style={{ background: '#111827', position: 'relative', overflow: 'hidden' }}>
+        <img
+          key={fotoActiva}
+          src={FOTOS_TERREMOTO[fotoActiva].src}
+          alt={FOTOS_TERREMOTO[fotoActiva].alt}
+          style={{
+            width: '100%', height: 220, objectFit: 'cover',
+            opacity: 0.7, display: 'block',
+          }}
+          onError={e => { e.target.style.display = 'none'; }}
+        />
+        <div style={{
+          position: 'absolute', bottom: 0, left: 0, right: 0,
+          background: 'linear-gradient(transparent, rgba(0,0,0,0.75))',
+          padding: '1rem',
+          color: '#fff', fontSize: '0.9rem', fontWeight: 600,
+        }}>
+          📍 {FOTOS_TERREMOTO[fotoActiva].caption}
+        </div>
+        {/* Indicadores */}
+        <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.4rem' }}>
+          {FOTOS_TERREMOTO.map((_, i) => (
+            <button key={i} onClick={() => setFotoActiva(i)}
+              style={{
+                width: 10, height: 10, borderRadius: '50%', padding: 0, minHeight: 'unset',
+                background: i === fotoActiva ? '#fff' : 'rgba(255,255,255,0.4)',
+                border: 'none',
+              }} />
+          ))}
+        </div>
+      </div>
+
+      {/* Estadísticas del terremoto */}
+      <div style={{ background: '#1A4A7A', color: '#fff', padding: '1.25rem 1rem' }}>
+        <div className="container">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem', textAlign: 'center' }}>
+            <div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFD700' }}>7.5</div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>Magnitud</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FF6B6B' }}>+920</div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>Fallecidos</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#FFD700' }}>+4300</div>
+              <div style={{ fontSize: '0.8rem', opacity: 0.85 }}>Heridos</div>
+            </div>
+          </div>
         </div>
       </div>
 
