@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { listarRecientes } from '../api';
+import { listarRecientes, listarPorEstado } from '../api';
 import PersonaCard from '../components/PersonaCard';
 
 const FOTOS_TERREMOTO = [
@@ -24,11 +24,13 @@ const FOTOS_TERREMOTO = [
 export default function Inicio() {
   const [busqueda, setBusqueda] = useState('');
   const [recientes, setRecientes] = useState([]);
+  const [desaparecidos, setDesaparecidos] = useState([]);
   const [fotoActiva, setFotoActiva] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     listarRecientes().then(r => setRecientes(r.data)).catch(() => {});
+    listarPorEstado('desaparecido').then(r => setDesaparecidos(r.data)).catch(() => {});
     const intervalo = setInterval(() => {
       setFotoActiva(f => (f + 1) % FOTOS_TERREMOTO.length);
     }, 5000);
@@ -70,18 +72,21 @@ export default function Inicio() {
         </div>
       </div>
 
-      {/* Galería de imágenes */}
-      <div style={{ background: '#111827', position: 'relative', overflow: 'hidden' }}>
-        <img
-          key={fotoActiva}
-          src={FOTOS_TERREMOTO[fotoActiva].src}
-          alt={FOTOS_TERREMOTO[fotoActiva].alt}
-          style={{
-            width: '100%', height: 220, objectFit: 'cover',
-            opacity: 0.7, display: 'block',
-          }}
-          onError={e => { e.target.style.display = 'none'; }}
-        />
+      {/* Galería de imágenes — sin parpadeo con fade CSS */}
+      <div style={{ background: '#111827', position: 'relative', overflow: 'hidden', height: 220 }}>
+        {FOTOS_TERREMOTO.map((foto, i) => (
+          <img
+            key={i}
+            src={foto.src}
+            alt={foto.alt}
+            style={{
+              position: 'absolute', top: 0, left: 0,
+              width: '100%', height: '100%', objectFit: 'cover',
+              opacity: i === fotoActiva ? 0.7 : 0,
+              transition: 'opacity 0.8s ease',
+            }}
+          />
+        ))}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,
           background: 'linear-gradient(transparent, rgba(0,0,0,0.75))',
@@ -90,14 +95,13 @@ export default function Inicio() {
         }}>
           📍 {FOTOS_TERREMOTO[fotoActiva].caption}
         </div>
-        {/* Indicadores */}
         <div style={{ position: 'absolute', top: '0.75rem', right: '0.75rem', display: 'flex', gap: '0.4rem' }}>
           {FOTOS_TERREMOTO.map((_, i) => (
             <button key={i} onClick={() => setFotoActiva(i)}
               style={{
                 width: 10, height: 10, borderRadius: '50%', padding: 0, minHeight: 'unset',
                 background: i === fotoActiva ? '#fff' : 'rgba(255,255,255,0.4)',
-                border: 'none',
+                border: 'none', cursor: 'pointer',
               }} />
           ))}
         </div>
@@ -176,6 +180,39 @@ export default function Inicio() {
           </Link>
         </div>
 
+        {/* Desaparecidos */}
+        {desaparecidos.length > 0 && (
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{
+              background: '#FFF3CD', border: '2px solid #856404', borderRadius: 12,
+              padding: '0.75rem 1rem', marginBottom: '0.75rem',
+              display: 'flex', alignItems: 'center', gap: '0.6rem',
+            }}>
+              <span style={{ fontSize: '1.5rem' }}>🔎</span>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '1.05rem', color: '#856404' }}>
+                  {desaparecidos.length} personas desaparecidas reportadas
+                </div>
+                <div style={{ fontSize: '0.85rem', color: '#6c5700' }}>
+                  Sus familias las están buscando — si sabes algo, haz clic en su nombre
+                </div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              {desaparecidos.slice(0, 15).map(p => (
+                <PersonaCard key={p.id} persona={p} />
+              ))}
+            </div>
+            {desaparecidos.length > 15 && (
+              <Link to="/buscar?estado=desaparecido">
+                <button style={{ width: '100%', marginTop: '0.75rem', background: '#856404', color: '#fff' }}>
+                  Ver los {desaparecidos.length} desaparecidos →
+                </button>
+              </Link>
+            )}
+          </div>
+        )}
+
         {/* Registros recientes */}
         {recientes.length > 0 && (
           <div>
@@ -190,10 +227,10 @@ export default function Inicio() {
           </div>
         )}
 
-        {recientes.length === 0 && (
+        {recientes.length === 0 && desaparecidos.length === 0 && (
           <div style={{ textAlign: 'center', padding: '2rem 1rem', color: '#9CA3AF' }}>
             <div style={{ fontSize: '3rem', marginBottom: '0.75rem' }}>📋</div>
-            <p style={{ fontSize: '1rem' }}>Aún no hay registros. Sé el primero en reportar.</p>
+            <p style={{ fontSize: '1rem' }}>Cargando registros...</p>
           </div>
         )}
       </div>
