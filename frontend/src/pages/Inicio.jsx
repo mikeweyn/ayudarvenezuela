@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listarRecientes, listarPorEstado } from '../api';
+import api from '../api';
 import PersonaCard from '../components/PersonaCard';
 
-const SLIDES = [
+const SLIDES_FIJOS = [
   {
     bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
     emoji: '🏚️',
@@ -29,13 +30,31 @@ export default function Inicio() {
   const [recientes, setRecientes] = useState([]);
   const [desaparecidos, setDesaparecidos] = useState([]);
   const [slideActivo, setSlideActivo] = useState(0);
+  const [slides, setSlides] = useState(SLIDES_FIJOS);
+  const slidesRef = useRef(SLIDES_FIJOS);
   const navigate = useNavigate();
 
   useEffect(() => {
     listarRecientes().then(r => setRecientes(r.data)).catch(() => {});
     listarPorEstado('desaparecido').then(r => setDesaparecidos(r.data)).catch(() => {});
+
+    api.get('/api/noticias').then(r => {
+      const noticias = (r.data || []).slice(0, 10);
+      if (noticias.length > 0) {
+        const slidesNoticias = noticias.map(n => ({
+          tipo: 'noticia',
+          imagen: n.imagen || null,
+          bg: 'linear-gradient(135deg, #0d2137 0%, #1a4a7a 50%, #1e5f9e 100%)',
+          titulo: n.titulo,
+          caption: n.autor,
+        }));
+        slidesRef.current = slidesNoticias;
+        setSlides(slidesNoticias);
+      }
+    }).catch(() => {});
+
     const intervalo = setInterval(() => {
-      setSlideActivo(f => (f + 1) % SLIDES.length);
+      setSlideActivo(f => (f + 1) % slidesRef.current.length);
     }, 5000);
     return () => clearInterval(intervalo);
   }, []);
@@ -75,38 +94,51 @@ export default function Inicio() {
         </div>
       </div>
 
-      {/* Slider de situación — sin imágenes externas, sin parpadeo */}
-      <div style={{ position: 'relative', overflow: 'hidden', height: 180 }}>
-        {SLIDES.map((slide, i) => (
-          <div key={i} style={{
-            position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            background: slide.bg,
-            opacity: i === slideActivo ? 1 : 0,
-            transition: 'opacity 0.9s ease',
-            display: 'flex', flexDirection: 'column',
-            alignItems: 'center', justifyContent: 'center',
-            padding: '1rem', textAlign: 'center',
-          }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.4rem' }}>{slide.emoji}</div>
-            <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.05rem', marginBottom: '0.3rem' }}>
-              {slide.titulo}
+      {/* Carrusel — noticias dinámicas o slides fijos */}
+      <Link to="/noticias" style={{ display: 'block', textDecoration: 'none' }}>
+        <div style={{ position: 'relative', overflow: 'hidden', height: 200 }}>
+          {slides.map((slide, i) => (
+            <div key={i} style={{
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+              opacity: i === slideActivo ? 1 : 0,
+              transition: 'opacity 0.9s ease',
+            }}>
+              {slide.imagen
+                ? <>
+                    <img src={slide.imagen} alt={slide.titulo}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
+                  </>
+                : <div style={{ width: '100%', height: '100%', background: slide.bg }} />
+              }
+              <div style={{
+                position: 'absolute', bottom: 0, left: 0, right: 0,
+                padding: '1rem', textAlign: 'center',
+              }}>
+                {!slide.imagen && slide.emoji && (
+                  <div style={{ fontSize: '2rem', marginBottom: '0.3rem' }}>{slide.emoji}</div>
+                )}
+                <div style={{ color: '#fff', fontWeight: 800, fontSize: '1rem', textShadow: '0 1px 4px rgba(0,0,0,0.6)', marginBottom: '0.2rem' }}>
+                  {slide.titulo}
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.8rem', textShadow: '0 1px 3px rgba(0,0,0,0.6)' }}>
+                  {slide.tipo === 'noticia' ? `📰 ${slide.caption}` : `📍 ${slide.caption}`}
+                </div>
+              </div>
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: '0.85rem' }}>
-              📍 {slide.caption}
-            </div>
-          </div>
-        ))}
-        <div style={{ position: 'absolute', bottom: '0.6rem', left: 0, right: 0, display: 'flex', justifyContent: 'center', gap: '0.4rem' }}>
-          {SLIDES.map((_, i) => (
-            <button key={i} onClick={() => setSlideActivo(i)}
-              style={{
-                width: 8, height: 8, borderRadius: '50%', padding: 0, minHeight: 'unset',
-                background: i === slideActivo ? '#FFD700' : 'rgba(255,255,255,0.4)',
-                border: 'none', cursor: 'pointer',
-              }} />
           ))}
+          <div style={{ position: 'absolute', bottom: '0.5rem', right: '0.75rem', display: 'flex', gap: '0.35rem' }}>
+            {slides.map((_, i) => (
+              <button key={i} onClick={e => { e.preventDefault(); setSlideActivo(i); }}
+                style={{
+                  width: 7, height: 7, borderRadius: '50%', padding: 0, minHeight: 'unset',
+                  background: i === slideActivo ? '#FFD700' : 'rgba(255,255,255,0.5)',
+                  border: 'none', cursor: 'pointer',
+                }} />
+            ))}
+          </div>
         </div>
-      </div>
+      </Link>
 
       {/* Estadísticas del terremoto */}
       <div style={{ background: '#1A4A7A', color: '#fff', padding: '1.25rem 1rem' }}>
