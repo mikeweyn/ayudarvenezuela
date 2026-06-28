@@ -7,13 +7,31 @@ function formatFecha(iso) {
   });
 }
 
+function ImagenFullscreen({ src, alt, onClose }) {
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(0,0,0,0.92)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+    }}>
+      <button onClick={onClose} style={{
+        position: 'absolute', top: '1rem', right: '1rem',
+        background: 'rgba(255,255,255,0.15)', color: '#fff', borderRadius: '50%',
+        width: 40, height: 40, fontSize: '1.2rem', fontWeight: 800, minHeight: 'unset', padding: 0,
+      }}>✕</button>
+      <img src={src} alt={alt} style={{ maxWidth: '100%', maxHeight: '90vh', objectFit: 'contain', borderRadius: 8 }} />
+    </div>
+  );
+}
+
 function NoticiaCard({ n }) {
   const [expandida, setExpandida] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   return (
     <div className="card" style={{ marginBottom: '1rem', padding: 0, overflow: 'hidden' }}>
+      {fullscreen && <ImagenFullscreen src={n.imagen} alt={n.titulo} onClose={() => setFullscreen(false)} />}
       {n.imagen && (
-        <img src={n.imagen} alt={n.titulo}
-          style={{ width: '100%', maxHeight: 280, objectFit: 'cover', display: 'block' }} />
+        <img src={n.imagen} alt={n.titulo} onClick={() => setFullscreen(true)}
+          style={{ width: '100%', maxHeight: 280, objectFit: 'cover', display: 'block', cursor: 'zoom-in' }} />
       )}
       <div style={{ padding: '1rem' }}>
         <h2 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: '0.4rem', color: '#111827' }}>
