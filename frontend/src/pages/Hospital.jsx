@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { registrarPersona } from '../api';
 
 const ESTADOS = [
@@ -111,7 +112,24 @@ export default function Hospital() {
         </div>
       </div>
 
-      <div className="container" style={{ marginTop: '1.25rem' }}>
+      {/* Botón subir lista */}
+      <div className="container" style={{ marginTop: '1rem' }}>
+        <Link to="/subir-lista" style={{ display: 'block', marginBottom: '1rem' }}>
+          <div style={{
+            background: '#EBF2FA', border: '2px solid #1A4A7A', borderRadius: 12,
+            padding: '0.9rem 1rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+          }}>
+            <span style={{ fontSize: '1.8rem' }}>📷</span>
+            <div>
+              <div style={{ fontWeight: 800, color: '#1A4A7A', fontSize: '0.95rem' }}>Subir foto de lista</div>
+              <div style={{ fontSize: '0.8rem', color: '#6B7280' }}>La IA lee los nombres automáticamente</div>
+            </div>
+            <span style={{ marginLeft: 'auto', color: '#1A4A7A', fontWeight: 800 }}>→</span>
+          </div>
+        </Link>
+      </div>
+
+      <div className="container">
         {/* Formulario rápido */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1.5rem' }}>
 

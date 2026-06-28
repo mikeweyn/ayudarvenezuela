@@ -10,3 +10,4 @@ export const registrarPersona = (data) => api.post('/api/personas', data);
 export const agregarAviso = (data) => api.post('/api/avisos', data);
 export const listarRecientes = () => api.get('/api/personas');
 export const listarPorEstado = (estado) => api.get(`/api/personas?estado=${encodeURIComponent(estado)}`);
+export default api;
