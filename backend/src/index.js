@@ -4,7 +4,8 @@ const cors = require('cors');
 
 const personasRouter = require('./routes/personas');
 const avisosRouter = require('./routes/avisos');
-const listasRouter = require('./routes/listas');
+const listasRouter   = require('./routes/listas');
+const noticiasRouter = require('./routes/noticias');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +25,7 @@ app.get('/health', (_, res) => res.json({ ok: true }));
 app.use('/api/personas', personasRouter);
 app.use('/api/avisos', avisosRouter);
 app.use('/api/listas', listasRouter);
+app.use('/api/noticias', noticiasRouter);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);

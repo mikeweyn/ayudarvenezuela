@@ -21,11 +21,12 @@ export function BottomNav() {
   }
 
   const items = [
-    { to: '/',            icon: '🏠', label: 'Inicio'       },
-    { to: '/buscar',      icon: '🔍', label: 'Buscar'       },
+    { to: '/',            icon: '🏠', label: 'Inicio'    },
+    { to: '/buscar',      icon: '🔍', label: 'Buscar'    },
     { to: '/reportar',    icon: '➕', label: 'Reportar', highlight: true },
-    { to: '/emergencias', icon: '🆘', label: 'Emergencias'  },
-    { to: '/hospital',    icon: '🏥', label: 'Hospital'     },
+    { to: '/noticias',    icon: '📰', label: 'Noticias'  },
+    { to: '/emergencias', icon: '🆘', label: 'Urgencias' },
+    { to: '/hospital',    icon: '🏥', label: 'Hospital'  },
   ];
 
   return (
@@ -47,9 +48,9 @@ export function BottomNav() {
               : isActive ? 'rgba(255,255,255,0.12)' : 'transparent',
             textDecoration: 'none',
           }}>
-            <span style={{ fontSize: '1.3rem', lineHeight: 1 }}>{item.icon}</span>
+            <span style={{ fontSize: '1.15rem', lineHeight: 1 }}>{item.icon}</span>
             <span style={{
-              fontSize: '0.65rem', fontWeight: 700, marginTop: '0.15rem',
+              fontSize: '0.58rem', fontWeight: 700, marginTop: '0.1rem',
               color: isActive ? '#FFD700' : item.highlight ? '#fff' : 'rgba(255,255,255,0.8)',
             }}>
               {item.label}

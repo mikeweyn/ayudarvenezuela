@@ -7,6 +7,7 @@ import Persona from './pages/Persona';
 import Emergencias from './pages/Emergencias';
 import Hospital from './pages/Hospital';
 import SubirLista from './pages/SubirLista';
+import Noticias from './pages/Noticias';
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="/emergencias" element={<Emergencias />} />
           <Route path="/hospital" element={<Hospital />} />
           <Route path="/subir-lista" element={<SubirLista />} />
+          <Route path="/noticias" element={<Noticias />} />
         </Routes>
       </main>
       <BottomNav />
