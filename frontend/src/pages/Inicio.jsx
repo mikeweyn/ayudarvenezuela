@@ -179,6 +179,21 @@ export default function Inicio() {
               </div>
             </div>
           </Link>
+
+          <Link to="/subir-lista">
+            <div style={{
+              background: '#fff', border: '2px solid #7C3AED', borderRadius: 14,
+              padding: '1.25rem 1.5rem', display: 'flex', alignItems: 'center', gap: '1rem',
+            }}>
+              <span style={{ fontSize: '2.5rem' }}>📷</span>
+              <div>
+                <div style={{ fontWeight: 800, fontSize: '1.2rem', color: '#7C3AED' }}>Subir foto de lista</div>
+                <div style={{ color: '#4B5563', fontSize: '0.95rem', marginTop: '0.2rem' }}>
+                  La IA lee los nombres automáticamente
+                </div>
+              </div>
+            </div>
+          </Link>
         </div>
 
         {/* Números de emergencia — widget compacto */}

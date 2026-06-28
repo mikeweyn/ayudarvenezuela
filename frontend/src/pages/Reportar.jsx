@@ -2,6 +2,24 @@ import { useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { registrarPersona } from '../api';
 
+function BannerSubirLista() {
+  return (
+    <Link to="/subir-lista" style={{ display: 'block', marginBottom: '1.5rem' }}>
+      <div style={{
+        background: '#F5F3FF', border: '2px solid #7C3AED', borderRadius: 14,
+        padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', gap: '0.75rem',
+      }}>
+        <span style={{ fontSize: '2rem' }}>📷</span>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 800, color: '#7C3AED', fontSize: '0.95rem' }}>¿Tenés una lista escrita a mano?</div>
+          <div style={{ fontSize: '0.82rem', color: '#6B7280', marginTop: '0.1rem' }}>Subí la foto y la IA importa todos los nombres sola</div>
+        </div>
+        <span style={{ color: '#7C3AED', fontWeight: 800 }}>→</span>
+      </div>
+    </Link>
+  );
+}
+
 const ESTADOS = [
   { value: 'bien',        label: '✅ Está bien' },
   { value: 'herido',      label: '🏥 Está herido/a' },
@@ -89,6 +107,8 @@ export default function Reportar() {
 
   return (
     <div className="container" style={{ paddingTop: '1.5rem', paddingBottom: '3rem' }}>
+
+      <BannerSubirLista />
 
       {/* Paso 1: tipo */}
       <div style={{ marginBottom: '1.75rem' }}>
