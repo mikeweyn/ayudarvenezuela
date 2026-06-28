@@ -62,6 +62,21 @@ export default function SubirLista() {
 
       <div className="container" style={{ marginTop: '1.5rem' }}>
 
+        {/* Limitaciones y restricciones */}
+        <div style={{ background: '#FFFBEB', border: '1.5px solid #F59E0B', borderRadius: 12, padding: '1rem', marginBottom: '1.25rem' }}>
+          <div style={{ fontWeight: 800, color: '#92400E', marginBottom: '0.6rem', fontSize: '0.95rem' }}>
+            ⚠️ Importante — leé antes de usar
+          </div>
+          <ul style={{ margin: 0, paddingLeft: '1.2rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontSize: '0.88rem', color: '#78350F' }}>
+            <li><strong>Solo listas de personas</strong> — la IA rechaza imágenes que no sean listas de pacientes, heridos o desaparecidos.</li>
+            <li><strong>Máximo 10 subidas por hora</strong> por dispositivo, para evitar abusos.</li>
+            <li><strong>Imagen nítida y bien iluminada</strong> — si la foto es borrosa, la IA puede cometer errores o no detectar todos los nombres.</li>
+            <li><strong>Tamaño máximo 10MB</strong> — JPG, PNG o HEIC.</li>
+            <li><strong>La IA puede equivocarse</strong> — revisá los nombres detectados antes de confirmar. Los nombres muy ilegibles pueden aparecer incorrectos.</li>
+            <li><strong>Todos los registros quedan como "heridos"</strong> — si el estado es otro, editalo luego buscando la persona.</li>
+          </ul>
+        </div>
+
         {!resultado ? (
           <>
             <label style={{
