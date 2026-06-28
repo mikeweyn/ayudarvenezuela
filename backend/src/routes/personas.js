@@ -32,7 +32,7 @@ router.get('/search', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { rows: [persona] } = await pool.query(
-      `SELECT id, nombre, apellido, estado, ultima_ubicacion, mensaje, contacto,
+      `SELECT id, nombre, apellido, cedula, estado, ultima_ubicacion, mensaje, contacto,
               foto_url, registrado_por, tipo_registro, created_at
        FROM personas WHERE id = $1`,
       [req.params.id]
@@ -55,7 +55,7 @@ router.get('/:id', async (req, res) => {
 
 // Registrar una persona
 router.post('/', async (req, res) => {
-  const { nombre, apellido, estado, ultima_ubicacion, mensaje, contacto, foto_url, registrado_por, tipo_registro } = req.body;
+  const { nombre, apellido, cedula, estado, ultima_ubicacion, mensaje, contacto, foto_url, registrado_por, tipo_registro } = req.body;
 
   if (!nombre || !apellido || !registrado_por) {
     return res.status(400).json({ error: 'Nombre, apellido y quien registra son obligatorios.' });
@@ -63,12 +63,13 @@ router.post('/', async (req, res) => {
 
   try {
     const { rows: [persona] } = await pool.query(
-      `INSERT INTO personas (nombre, apellido, estado, ultima_ubicacion, mensaje, contacto, foto_url, registrado_por, tipo_registro)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO personas (nombre, apellido, cedula, estado, ultima_ubicacion, mensaje, contacto, foto_url, registrado_por, tipo_registro)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
         nombre.trim(),
         apellido.trim(),
+        cedula?.trim() || null,
         estado || 'desconocido',
         ultima_ubicacion?.trim() || null,
         mensaje?.trim() || null,

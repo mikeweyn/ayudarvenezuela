@@ -118,6 +118,12 @@ export default function Persona() {
           </div>
         </div>
 
+        {persona.cedula && (
+          <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.5rem', alignItems: 'center' }}>
+            <span>🪪</span>
+            <span style={{ fontSize: '0.95rem', fontWeight: 600 }}>{persona.cedula}</span>
+          </div>
+        )}
         {persona.ultima_ubicacion && (
           <div style={{ display: 'flex', gap: '0.4rem', marginBottom: '0.6rem', alignItems: 'flex-start' }}>
             <span>📍</span>

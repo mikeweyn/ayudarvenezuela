@@ -42,6 +42,7 @@ export default function Reportar() {
   const [form, setForm] = useState({
     nombre:          nombreInicial.split(' ')[0] || '',
     apellido:        nombreInicial.split(' ').slice(1).join(' ') || '',
+    cedula:          '',
     estado:          tipoInicial === 'yo_mismo' ? 'bien' : 'desconocido',
     ultima_ubicacion:'',
     mensaje:         '',
@@ -155,6 +156,16 @@ export default function Reportar() {
             <label>Apellido *</label>
             <input value={form.apellido} onChange={e => set('apellido', e.target.value)} placeholder="Pérez" />
           </div>
+        </div>
+
+        <div className="campo">
+          <label>Cédula de identidad <span style={{ fontWeight: 400, color: '#9CA3AF' }}>(opcional)</span></label>
+          <input
+            value={form.cedula}
+            onChange={e => set('cedula', e.target.value)}
+            placeholder="Ej: V-12.345.678"
+            inputMode="numeric"
+          />
         </div>
 
         <div className="campo">
