@@ -33,8 +33,16 @@ export default function SubirLista() {
         timeout: 60000,
       });
       setResultado(data);
-    } catch {
-      setError('Error al procesar la imagen. Verificá que sea legible e intentá de nuevo.');
+    } catch (e) {
+      const msg = e?.response?.data?.error || '';
+      const motivo = e?.response?.data?.motivo || '';
+      if (msg.includes('lista de pacientes')) {
+        setError(`⚠️ ${msg}${motivo ? ' ' + motivo : ''}`);
+      } else if (msg.includes('Límite')) {
+        setError('⏱️ ' + msg);
+      } else {
+        setError('Error al procesar la imagen. Verificá que sea legible e intentá de nuevo.');
+      }
     } finally {
       setProcesando(false);
     }
